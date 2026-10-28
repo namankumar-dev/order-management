@@ -1,0 +1,40 @@
+{
+  "family": "order-api",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "512",
+  "memory": "1024",
+  "executionRoleArn": "arn:aws:iam::ACCOUNT_ID:role/order-api-execution-role",
+  "taskRoleArn": "arn:aws:iam::ACCOUNT_ID:role/order-api-task-role",
+  "containerDefinitions": [
+    {
+      "name": "order-api",
+      "image": "REPLACED_BY_PIPELINE",
+      "essential": true,
+      "portMappings": [
+        { "containerPort": 8080, "protocol": "tcp" },
+        { "containerPort": 9090, "protocol": "tcp" }
+      ],
+      "environment": [
+        { "name": "APP_ENV", "value": "production" },
+        { "name": "APP_PORT", "value": "8080" },
+        { "name": "METRICS_PORT", "value": "9090" },
+        { "name": "AWS_REGION", "value": "ap-south-1" },
+        { "name": "SECRETS_NAME", "value": "order-management/prod" },
+        { "name": "DB_SSLMODE", "value": "require" },
+        { "name": "LOG_LEVEL", "value": "info" },
+        { "name": "LOG_FORMAT", "value": "json" },
+        { "name": "TRUSTED_PROXIES", "value": "10.0.0.0/16" },
+        { "name": "PRODUCT_SERVICE_URL", "value": "http://product-service.order.internal:8081" }
+      ],
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/order-api",
+          "awslogs-region": "ap-south-1",
+          "awslogs-stream-prefix": "api"
+        }
+      }
+    }
+  ]
+}
